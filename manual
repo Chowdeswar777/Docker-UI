@@ -1,0 +1,15 @@
+sudo yum install -y yum-utils   device-mapper-persistent-data   lvm2
+sudo yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install docker-ce
+sudo systemctl start docker
+docker version
+systemctl stop firewalld
+systemctl disable firewalld
+cd ~
+mkdir -p /certs
+openssl req   -newkey rsa:4096 -nodes -sha256 -keyout certs/portainer.key   -x509 -days 365 -out certs/portainer.crt
+cd /opt
+mkdir data
+cd ~
+docker run -d -p 443:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /opt/data:/data  -v /root/certs:/certs portainer/portainer --ssl --sslcert /certs/portainer.crt --sslkey /certs/portainer.key
+docker ps
